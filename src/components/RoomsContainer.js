@@ -5,7 +5,7 @@ import { withRoomConsumer } from "../Context";
 import Loading from "./Loading";
 
 function RoomsContainer({ context }){
-  console.log("context :", context)
+ // console.log("context :", context)
     const { loading, sortedRooms, rooms } = context;
     if (loading) {
       return <Loading />;
