@@ -1,5 +1,11 @@
 import React, { Component } from "react";
 import items from "./data";
+import Client from './Contentful';
+import { async } from "q";
+// Client.getEntries({
+//    content_type:"beachResortRoom"
+
+// }).then(response=>console.log(response.items));
 
 const RoomContext = React.createContext();
 class RoomProvider extends Component {
@@ -18,10 +24,9 @@ class RoomProvider extends Component {
     breakfast: true,
     pets: false
   };
-  //getData
 
-  componentDidMount() {
-    //this.getData
+  //get local data
+  getLocalData =(items)=>{
     let rooms = this.formatData(items);
     //console.log(rooms);
     let featuredRooms = rooms.filter(room => room.featured === true);
@@ -42,6 +47,30 @@ class RoomProvider extends Component {
       breakfast: false,
       pets: false
     });
+  };
+
+  //get Server Data
+  getRemoteData = async () => {
+    try {
+      let response= await Client.getEntries({
+        content_type:"beachResortRoom",
+       // order:"sys.createdAt"
+      //order by price
+      // order:'fields.price'
+      //order by reverse
+       order:'-fields.price'
+     });
+     this.getLocalData(response.items);
+    } catch (error) {
+       console.log(error);
+    }
+  }
+
+  componentDidMount() {
+    //Loacl Data
+    //this.getLocalData(items);
+    //Remaote data from contentful
+    this.getRemoteData();
   }
 
   formatData(items) {
